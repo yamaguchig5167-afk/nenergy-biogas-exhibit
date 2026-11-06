@@ -7,6 +7,8 @@
 - 実機の自己診断（設営の確認用）：`index.html#kiosk-check`
 - Web版：`index.html`
 
-単一のHTMLファイルで、外部の読み込みはありません（説明欄の動画もファイルに埋め込み）。エヌエナジー様の紹介動画（YouTube）：https://www.youtube.com/watch?v=RRz87myyzbQ来場者の手書きは保存・送信しません。
+単一のHTMLファイルで、外部の読み込みはありません（説明欄の動画もファイルに埋め込み）。エヌエナジー様の紹介動画（YouTube）：https://www.youtube.com/watch?v=RRz87myyzbQ
+
+来場者の手書きは保存・送信しません。
 
 展示システム制作：ソルエイト株式会社
