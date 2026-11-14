@@ -31,11 +31,11 @@ footer{margin-top:22px;font-size:12px;color:var(--muted);text-align:center}
 <script>
 (function(){
 var q=new URLSearchParams(location.search);
-var s=parseInt(q.get('s'),10);if(!(s>=0&&s<=3))s=null;
+var s=/^[0-3]$/.test(q.get('s')||'')?+q.get('s'):null;
 // 同じスマホで「もっとリサイクル めいじん」（mission.html）も開いていたら ダブル にんてい（2026-11-14・このスマホの中だけの記録）
-var KEY='ne-phone-v1',st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(_){}
+var KEY='ne-phone-v1',st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(_){}if(!st||typeof st!=='object'||Array.isArray(st))st={};
 if(s!==null){st.hakase={s:s,at:Date.now()};try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_){}}
-var W2=!!st.meijin,wb=document.getElementById('wbox');
+var W2=!!(st.meijin&&typeof st.meijin==='object'&&/^[1-3]$/.test(String(st.meijin.s))),wb=document.getElementById('wbox');
 if(W2){wb.className='w yes';wb.innerHTML='<b>ダブル にんてい！</b>「バイオガスはかせ」と「もっとリサイクル めいじん」の りょうほうに なったよ。<a href="./mission.html">おうちミッション</a>も つづけてね。'}
 else{wb.innerHTML='永野商店と エヌエナジーの「<a href="./recycle.html">わけわけチャレンジ</a>」で「もっとリサイクル めいじん」にも なると、<b>ダブル にんてい</b>！'}
 var d=q.get('d');var DAY={'1121':'2026年11月21日','1122':'2026年11月22日'}[d]||null;
@@ -58,7 +58,7 @@ function draw(){
  var kw=520,kh=kids.height*kw/kids.width;g.drawImage(kids,(W-kw)/2,H-90-kh,kw,kh);
  g.save();g.translate(W-200,s!==null?880:860);g.rotate(-10*Math.PI/180);g.globalAlpha=.88;g.strokeStyle='#d0342c';g.lineWidth=9;g.beginPath();g.arc(0,0,110,0,Math.PI*2);g.stroke();g.fillStyle='#d0342c';g.font='800 46px '+F;g.textAlign='center';g.fillText('はかせ',0,-6);g.fillText('にんてい',0,52);g.restore();
  if(W2){g.save();g.translate(190,300);g.rotate(-12*Math.PI/180);g.fillStyle='#19559d';g.beginPath();g.arc(0,0,92,0,Math.PI*2);g.fill();g.fillStyle='#fff';g.font='900 40px '+F;g.textAlign='center';g.fillText('ダブル',0,-8);g.fillText('にんてい',0,40);g.restore()}
- document.getElementById('out').src=cv.toDataURL('image/png');
+ document.getElementById('out').src=cv.toDataURL('image/png');document.getElementById('out').alt='バイオガスはかせ にんていしょう。'+(nm?nm+' は バイオガスはかせ。':'')+(s!==null?'せいかい '+s+' / 3。':'')+(W2?'ダブル にんてい。':'');
 }
 document.getElementById('nm').addEventListener('input',function(){if(ready===2)draw()});
 document.getElementById('save').addEventListener('click',function(){cv.toBlob(function(b){if(!b)return;var f=new File([b],'bio-gas-hakase.png',{type:'image/png'});

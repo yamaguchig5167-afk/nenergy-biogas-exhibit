@@ -31,7 +31,6 @@ body:has(#app.port) #frame{background:var(--bg)}
 #app{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;background:var(--bg);overflow:hidden;word-break:keep-all;overflow-wrap:anywhere}
 #app.port{width:1080px;height:1920px;top:0;transform-origin:50% 0}
 body:has(#app.port){background:var(--bg)}
-#app::before{content:"";position:absolute;inset:0;background:radial-gradient(1200px 520px at 85% -10%,#ffffff 0,transparent 70%),radial-gradient(900px 500px at -10% 110%,#dcebf8 0,transparent 70%);pointer-events:none}
 
 /* 上の帯 */
 .top{position:absolute;left:0;right:0;top:0;height:104px;display:flex;align-items:center;gap:22px;padding:0 36px;background:#fff;border-bottom:1px solid var(--line);z-index:5}
@@ -106,7 +105,6 @@ body:has(#app.port){background:var(--bg)}
 .port .dots{margin-left:0}.port .dots i{width:34px;height:34px}
 .stage{position:absolute;left:60px;right:60px;top:96px;height:500px;border-radius:32px;background:#fff;border:2px solid var(--line);overflow:hidden}
 .port .stage{left:40px;right:40px;top:170px;bottom:740px;height:auto}
-.stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(#fff0,#f1f6fb)}
 .itext{position:absolute;left:80px;width:800px;top:56px;bottom:40px;display:flex;flex-direction:column;justify-content:center;gap:26px;z-index:2}
 .port .itext{display:contents}
 .iname{font-size:60px;font-weight:900;line-height:1.25}
@@ -226,7 +224,7 @@ body:has(#app.port){background:var(--bg)}
 .tctrl button{height:100px;padding:0 50px;border:0;border-radius:50px;background:var(--blue);color:#fff;font-size:40px;font-weight:900;box-shadow:0 8px 0 var(--blue-d)}
 .tctrl button:active{transform:translateY(5px);box-shadow:0 3px 0 var(--blue-d)}
 .tctrl .meter{flex:1;height:34px;border-radius:17px;background:#fff;border:3px solid var(--line);overflow:hidden}
-.tctrl .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6aa6e0,var(--blue));transition:width .6s}
+.tctrl .meter i{display:block;height:100%;width:0;background:var(--blue);transition:width .6s}
 .tctrl span{font-size:30px;font-weight:900;color:var(--blue-d);min-width:180px}
 .port .tctrl button{height:110px;font-size:44px}
 .cside{display:flex;flex-direction:column;gap:22px;overflow:hidden}
@@ -343,8 +341,8 @@ body:has(#app.port){background:var(--bg)}
   <section class="scene" id="s-game" aria-label="わけわけゲーム">
     <div class="ghead"><h2>ただしい はこへ いれよう</h2><div class="dots" id="dots"></div></div>
     <div class="stage" id="stage">
-      <div class="itext"><div class="iname" id="iname"></div><div class="ihint" id="ihint"></div></div>
-      <div id="itemwrap" role="img"></div>
+      <div class="itext"><div class="iname" id="iname"></div><div class="ihint" id="ihint" role="status" aria-live="polite"></div></div>
+      <div id="itemwrap" role="button" tabindex="0"></div>
     </div>
     <div class="bins" id="bins"></div>
     <p class="note">ごみの 出しかたは、すんでいる まちの ルールで たしかめてね。</p>
@@ -419,9 +417,9 @@ body:has(#app.port){background:var(--bg)}
 <script>
 'use strict';
 // ---- 設定 ----
-const ROUND_ITEMS=8;        // わけわけゲームの数
+const ROUND_ITEMS=6;        // わけわけゲームの数（5つのはこ全部＋1。1組 2分前後を目安に 2026-11-14 8→6）
 const QUIZ_COUNT=3;         // クイズの数
-const FACT_MS=10000;        // 「うまれかわり」の画面を自動で閉じるまで（展示モード。読み終えたら「つぎの ごみ」で すぐ進める）
+const FACT_MS=8000;         // 「うまれかわり」の画面を自動で閉じるまで（展示モード。読み終えたら「つぎの ごみ」で すぐ進める）
 const IDLE_MS=90000;        // 展示モードで、さわらないまま この時間がたつと バイオガスの展示に戻る
 const MAIN_URL='./index.html';
 const KIOSK=/^#kiosk/.test(location.hash);
@@ -525,7 +523,8 @@ const QUIZ=[
 
 // ---- 画面の切り替え ----
 let scene='home';
-function show(id){scene=id;$$('.scene').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));$('#btn-home').hidden=(id==='home');$('#igtop').classList.toggle('on',id==='home');closeFact();if(id!=='cars')truckReset()}
+let gGen=0; // 画面や品物が変わるたびに増やす。古いアニメーションの続きを止める目印
+function show(id){gGen++;scene=id;const iw=document.getElementById('itemwrap');if(iw)iw.getAnimations().forEach(a=>a.cancel());$$('.scene').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));$('#btn-home').hidden=(id==='home');$('#igtop').classList.toggle('on',id==='home');$('#btn-about').hidden=(id!=='home');closeFact();if(id!=='cars')truckReset()}
 $('#btn-home').onclick=()=>{show('home')};
 $('#btn-back').onclick=goMain;$('#btn-exhibit').onclick=goMain;
 function goMain(){location.href=MAIN_URL+(KIOSK?'#kiosk':'')}
@@ -549,6 +548,7 @@ const QRM={"s1_bin":"<svg role=\"img\" aria-label=\"スマホ用 おうちミッ
 
 // ---- わけわけゲーム ----
 $('#bins').innerHTML=BINS.map(b=>'<button class="bin" type="button" data-bin="'+b.id+'" aria-label="'+b.name+'の はこ"><span class="lid"></span><span class="body"><span class="bi">'+miniOf(b.icon)+'</span><b>'+b.name+'</b><small>'+b.sub+'</small></span></button>').join('');
+let warned=false;
 let order=[],idx=0,score=0,misses=0,removed=new Set(),busy=false,gameScore=0,quizScore=0,gameDone=false;
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 // つまずいた所（スマホの おうちミッションに使う。個人の情報ではない）
@@ -560,13 +560,14 @@ function startGame(){trip={};const keys=Object.keys(ITEMS);const first=BINS.map(
   order=shuffle(first.concat(rest));idx=0;score=0;gameDone=false;show('game');drawDots();loadItem()}
 function drawDots(){$('#dots').innerHTML=order.map((k,i)=>'<i class="'+(i<idx?(dotRes[i]?'ok':'mis'):i===idx?'now':'')+'"></i>').join('')}
 let dotRes=[];
-function loadItem(){const k=order[idx],it=ITEMS[k];misses=0;removed=new Set();busy=false;
+function loadItem(){gGen++;const k=order[idx],it=ITEMS[k];misses=0;warned=false;removed=new Set();busy=false;
   const w=$('#itemwrap');w.innerHTML=svgOf(k);w.style.transform='';w.classList.remove('enter');void w.offsetWidth;w.classList.add('enter');w.setAttribute('aria-label',it.name);
   $('#iname').textContent=it.name;$$('.bin').forEach(b=>b.classList.remove('hint','hot','ng'));
   w.querySelectorAll('.part').forEach(p=>p.addEventListener('pointerdown',onPart));
   setHint();drawDots()}
 function pending(){const it=ITEMS[order[idx]];return it.prep.filter(([p])=>!removed.has(p))}
 function setHint(warn){const pd=pending(),h=$('#ihint');$$('.ptag').forEach(t=>t.remove());$$('#itemwrap .part').forEach(p=>p.classList.toggle('need',pd.some(([q])=>q===p.dataset.part)));
+  $('#itemwrap').setAttribute('aria-label',ITEMS[order[idx]].name+(pd.length?'。Enterで '+pd[0][1]:'。はこの ボタンで いれる'));
   if(pd.length){h.textContent=(warn?'まって！ さきに ':'')+pd.map(([,l])=>l).join('・')+(warn?'':'。ひかっている ところを タッチ');h.classList.toggle('warn',!!warn);const [p,l]=pd[0];putTag(p,l)}
   else{h.textContent=misses>=2?'ひかっている はこへ いれよう':'はこを タッチするか、ゆびで はこまで ひっぱろう';h.classList.remove('warn')}}
 function putTag(part,label){const w=$('#itemwrap'),st=$('#stage');const pos=(CAP_POS_ITEM[order[idx]]||{})[part]||CAP_POS[part]||[100,40];const ww=w.offsetWidth,wh=w.offsetHeight;const t=document.createElement('div');t.className='ptag';t.textContent='タッチ！';
@@ -581,27 +582,27 @@ function splash(g){const svg=g.ownerSVGElement;const ns='http://www.w3.org/2000/
 
 // ひっぱる（ドラッグ）・はこを タッチ
 (function(){const w=$('#itemwrap');let sx=0,sy=0,drag=false,id=null,moved=0;
-  w.addEventListener('pointerdown',e=>{if(busy||scene!=='game')return;id=e.pointerId;sx=e.clientX;sy=e.clientY;drag=true;moved=0;w.classList.add('drag');try{w.setPointerCapture(id)}catch(_){}});
+  w.addEventListener('pointerdown',e=>{if(busy||scene!=='game'||drag||e.isPrimary===false)return;id=e.pointerId;sx=e.clientX;sy=e.clientY;drag=true;moved=0;w.classList.add('drag');try{w.setPointerCapture(id)}catch(_){}});
   w.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==id)return;const dx=(e.clientX-sx)/SCALE,dy=(e.clientY-sy)/SCALE;moved=Math.max(moved,Math.hypot(dx,dy));w.style.transform='translate('+dx+'px,'+dy+'px) rotate('+Math.max(-12,Math.min(12,dx/20))+'deg)';const b=binAt(e.clientX,e.clientY);$$('.bin').forEach(x=>x.classList.toggle('hot',x===b))});
-  const end=e=>{if(!drag||e.pointerId!==id)return;drag=false;w.classList.remove('drag');$$('.bin').forEach(x=>x.classList.remove('hot'));const b=moved>30?binAt(e.clientX,e.clientY):null;
+  const end=e=>{if(!drag||e.pointerId!==id)return;drag=false;try{w.releasePointerCapture(id)}catch(_){}id=null;w.classList.remove('drag');$$('.bin').forEach(x=>x.classList.remove('hot'));const b=moved>30?binAt(e.clientX,e.clientY):null;
     if(b)throwTo(b.dataset.bin,true);else{w.animate([{transform:w.style.transform||'none'},{transform:'none'}],{duration:REDUCED?1:250,easing:'ease-out'});w.style.transform='';if(moved<=30){const pd=pending();if(pd.length){doPrep(pd[0][0])}else{w.classList.remove('nudge');void w.offsetWidth;w.classList.add('nudge')}}}};
   w.addEventListener('pointerup',end);w.addEventListener('pointercancel',end)})();
 function binAt(x,y){return $$('.bin').find(b=>{const r=b.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top-30*SCALE&&y<=r.bottom})||null}
 $('#bins').addEventListener('click',e=>{const b=e.target.closest('.bin');if(!b||busy||scene!=='game')return;throwTo(b.dataset.bin,false)});
 
-function throwTo(bin,dragged){const k=order[idx],it=ITEMS[k],w=$('#itemwrap'),b=$('.bin[data-bin="'+bin+'"]');
-  if(it.bin===bin&&pending().length){const t=TRIP_OF[pending()[0][0]];trip[t]=(trip[t]||0)+1;back(w);setHint(true);w.classList.remove('nudge');void w.offsetWidth;w.classList.add('nudge');return}
+function throwTo(bin,dragged){if(busy||scene!=='game')return;const k=order[idx],it=ITEMS[k],w=$('#itemwrap'),b=$('.bin[data-bin="'+bin+'"]');
+  if(it.bin===bin&&pending().length){warned=true;const t=TRIP_OF[pending()[0][0]];trip[t]=(trip[t]||0)+1;back(w);setHint(true);w.classList.remove('nudge');void w.offsetWidth;w.classList.add('nudge');return}
   if(it.bin!==bin){misses++;trip.bin=(trip.bin||0)+1;tick('rc_miss');b.classList.remove('ng');void b.offsetWidth;b.classList.add('ng');back(w);
     const h=$('#ihint');h.classList.add('warn');h.textContent=(misses>=2?'ざんねん。ひかっている はこだよ':'ちがう はこ みたい。もういちど！');
     if(misses>=2)$('.bin[data-bin="'+it.bin+'"]').classList.add('hint');return}
   // 正解：はこへ とんでいく
-  busy=true;const first=misses===0;if(first)score++;dotRes[idx]=first;tick('rc_ok');
+  busy=true;const gen=gGen;const first=misses===0&&!warned;if(first)score++;dotRes[idx]=first;tick('rc_ok');
   const wr=w.getBoundingClientRect(),br=b.getBoundingClientRect();const cur=w.style.transform||'none';
   const tx=((br.left+br.width/2)-(wr.left+wr.width/2))/SCALE,ty=((br.top+br.height*.3)-(wr.top+wr.height/2))/SCALE;
   const base=cur==='none'?'':cur.replace(/rotate\([^)]*\)/,'');
   const m=base.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);const ox=m?+m[1]:0,oy=m?+m[2]:0;
   const a=w.animate([{transform:'translate('+ox+'px,'+oy+'px) scale(1)'},{transform:'translate('+(ox+tx)+'px,'+(oy+ty-120)+'px) scale(.55) rotate(20deg)',offset:.6},{transform:'translate('+(ox+tx)+'px,'+(oy+ty)+'px) scale(.15) rotate(40deg)',opacity:.2}],{duration:REDUCED?1:650,easing:'ease-in',fill:'forwards'});
-  a.onfinish=()=>{w.style.transform='translate('+(ox+tx)+'px,'+(oy+ty)+'px) scale(0)';a.cancel();b.classList.remove('gulp');void b.offsetWidth;b.classList.add('gulp');confetti(br,8);setTimeout(()=>openFact(k,first),REDUCED?0:350)}}
+  a.onfinish=()=>{if(gen!==gGen||scene!=='game')return;w.style.transform='translate('+(ox+tx)+'px,'+(oy+ty)+'px) scale(0)';a.cancel();b.classList.remove('gulp');void b.offsetWidth;b.classList.add('gulp');confetti(br,8);setTimeout(()=>{if(gen===gGen&&scene==='game')openFact(k,first)},REDUCED?0:350)}}
 function back(w){const cur=w.style.transform;if(cur&&cur!=='none'){w.animate([{transform:cur},{transform:'none'}],{duration:REDUCED?1:300,easing:'cubic-bezier(.3,1.4,.5,1)'})}w.style.transform=''}
 
 // ---- うまれかわり（正解のあと） ----
@@ -609,10 +610,12 @@ let factTimer=null,factBar=null;
 function openFact(k,first){const it=ITEMS[k],f=$('#fact');const arrow='<svg class="arr" viewBox="0 0 44 44" aria-hidden="true"><path d="M8 22h26M24 12l10 10-10 10" fill="none" stroke="#19559d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const last=idx>=order.length-1;
   f.innerHTML='<div class="fcard"><figure class="fphoto" style="margin:0"><img src="'+P[it.photo]+'" alt=""><figcaption>'+CAP[it.photo]+'</figcaption></figure><div class="fbody"><div class="fok'+(first?'':' again')+'"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="'+(first?'#2f8a57':'#f2a53a')+'"/><path d="M17 31l9 9 17-19" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>'+(first?'せいかい！':'できたね！')+'</div><div class="fh" id="fh">'+it.name+'は…</div><div class="flow"><span class="from">うまれかわると</span>'+arrow+'<span class="to">'+it.to.map(t=>'<b>'+t+'</b>').join('')+'</span></div><p class="fnote">'+it.note+'</p><button class="fnext" type="button" id="fnext">'+(last?'けっかを みる':'つぎの ごみ')+'<i></i></button></div></div>';
-  f.classList.add('on');$('#fnext').onclick=nextItem;
+  f.classList.add('on');$('#fnext').onclick=nextItem;setTimeout(()=>{try{$('#fnext').focus({preventScroll:true})}catch(_){}},50);
   clearTimeout(factTimer);if(KIOSK){factTimer=setTimeout(nextItem,FACT_MS);factBar=$('#fnext i').animate([{width:'0%'},{width:'100%'}],{duration:FACT_MS,fill:'forwards'})}}
-function closeFact(){clearTimeout(factTimer);$('#fact').classList.remove('on')}
-function nextItem(){closeFact();if(scene!=='game')return;idx++;if(idx>=order.length){gameScore=score;gameDone=true;tick('rc_game_done');if(flow)startQuiz();else showCert();return}loadItem()}
+function closeFact(){clearTimeout(factTimer);if(factBar){try{factBar.cancel()}catch(_){}factBar=null}$('#fact').classList.remove('on')}
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#fact').classList.contains('on'))nextItem();if((e.key==='Enter'||e.key===' ')&&document.activeElement&&document.activeElement.id==='itemwrap'){e.preventDefault();const pd=pending();if(pd.length)doPrep(pd[0][0])}});
+// 二度押し・自動送りと同時に押したときに、1つ飛ばさないよう「うまれかわり」が開いているときだけ進める
+function nextItem(){if(!$('#fact').classList.contains('on'))return;closeFact();if(scene!=='game')return;idx++;if(idx>=order.length){gameScore=score;gameDone=true;tick('rc_game_done');if(flow)startQuiz();else showCert();return}loadItem()}
 $('#fact').addEventListener('click',e=>{if(e.target.id==='fact')nextItem()});
 
 // ---- クイズ ----
@@ -688,7 +691,7 @@ function drive(){tBusy=true;tick('rc_truck_go');const gen=tGen;const tk=$('#tk')
 
 // ---- 展示モード：さわらないまま 90 秒で バイオガスの展示へ ----
 let idleT=null;function poke(){if(!KIOSK)return;clearTimeout(idleT);idleT=setTimeout(()=>{if($('#fact').classList.contains('on')&&scene==='game'){poke();return}goMain()},IDLE_MS)}
-['pointerdown','keydown'].forEach(ev=>addEventListener(ev,poke,{passive:true}));poke();
+['pointerdown','keydown','click'].forEach(ev=>addEventListener(ev,poke,{passive:true,capture:true}));poke();
 if(KIOSK)tick('rc_open');
 addEventListener('contextmenu',e=>e.preventDefault());
 </script>
