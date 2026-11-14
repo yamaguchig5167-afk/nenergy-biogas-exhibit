@@ -14,6 +14,7 @@ input{width:100%;font:inherit;font-size:18px;padding:12px 14px;border:2px solid 
 .save{background:#ffd54a;color:#17392e;box-shadow:0 4px 0 #d4a92a}.sub{background:#fff;color:var(--green);border:2px solid var(--line)}.prim{background:var(--green);color:#fff}
 .note{margin-top:14px;font-size:13px;color:var(--muted)}.hint{margin:10px 0 0;font-size:14px;color:var(--muted);text-align:center}
 footer{margin-top:22px;font-size:12px;color:var(--muted);text-align:center}
+.w{margin:16px 0 0;padding:14px 16px;border-radius:16px;font-size:15px;line-height:1.6}.w.yes{background:#175b43;color:#fff}.w.yes b{display:block;font-size:20px}.w.no{background:#fff;border:2px dashed #b9cdb8;color:var(--muted)}.w a{color:inherit;font-weight:700}
 </style></head><body><main>
 <h1>バイオガスはかせ にんていしょう</h1><p class="lead">UT WONDER LAND 2026　エヌエナジーの展示より</p>
 <img id="out" alt="バイオガスはかせ にんていしょうの画像">
@@ -21,6 +22,7 @@ footer{margin-top:22px;font-size:12px;color:var(--muted);text-align:center}
 <input id="nm" maxlength="12" autocomplete="off" placeholder="たとえば　そらさん">
 <button class="btn save" id="save" type="button">画像を保存する</button>
 <p class="hint" id="hint">保存できないときは、上の画像を長押しして保存してください</p>
+<div class="w no" id="wbox"></div>
 <a class="btn prim" href="./">展示をもう一度見る</a>
 <a class="btn sub" href="https://www.instagram.com/nenergy.n/" target="_blank" rel="noopener">エヌエナジー公式 Instagram</a>
 <p class="note">この認定証の画像は、このスマホの中で作られます。なまえも画像も、どこにも送られません。</p>
@@ -30,6 +32,12 @@ footer{margin-top:22px;font-size:12px;color:var(--muted);text-align:center}
 (function(){
 var q=new URLSearchParams(location.search);
 var s=parseInt(q.get('s'),10);if(!(s>=0&&s<=3))s=null;
+// 同じスマホで「もっとリサイクル めいじん」（mission.html）も開いていたら ダブル にんてい（2026-11-14・このスマホの中だけの記録）
+var KEY='ne-phone-v1',st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(_){}
+if(s!==null){st.hakase={s:s,at:Date.now()};try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_){}}
+var W2=!!st.meijin,wb=document.getElementById('wbox');
+if(W2){wb.className='w yes';wb.innerHTML='<b>ダブル にんてい！</b>「バイオガスはかせ」と「もっとリサイクル めいじん」の りょうほうに なったよ。<a href="./mission.html">おうちミッション</a>も つづけてね。'}
+else{wb.innerHTML='永野商店と エヌエナジーの「<a href="./recycle.html">わけわけチャレンジ</a>」で「もっとリサイクル めいじん」にも なると、<b>ダブル にんてい</b>！'}
 var d=q.get('d');var DAY={'1121':'2026年11月21日','1122':'2026年11月22日'}[d]||null;
 var dateLine=DAY?('UT WONDER LAND 2026　'+DAY):(function(){var t=new Date();return t.getFullYear()+'年'+(t.getMonth()+1)+'月'+t.getDate()+'日'})();
 var W=1080,H=1500,cv=document.createElement('canvas');cv.width=W;cv.height=H;var g=cv.getContext('2d');
@@ -49,6 +57,7 @@ function draw(){
  g.font='400 32px '+F;g.fillStyle='#5a6e64';g.fillText(dateLine,W/2,s!==null?1080:960);g.fillText('熊本西部バイオガス発電所（エヌエナジー株式会社）',W/2,s!==null?1128:1008);
  var kw=520,kh=kids.height*kw/kids.width;g.drawImage(kids,(W-kw)/2,H-90-kh,kw,kh);
  g.save();g.translate(W-200,s!==null?880:860);g.rotate(-10*Math.PI/180);g.globalAlpha=.88;g.strokeStyle='#d0342c';g.lineWidth=9;g.beginPath();g.arc(0,0,110,0,Math.PI*2);g.stroke();g.fillStyle='#d0342c';g.font='800 46px '+F;g.textAlign='center';g.fillText('はかせ',0,-6);g.fillText('にんてい',0,52);g.restore();
+ if(W2){g.save();g.translate(190,300);g.rotate(-12*Math.PI/180);g.fillStyle='#19559d';g.beginPath();g.arc(0,0,92,0,Math.PI*2);g.fill();g.fillStyle='#fff';g.font='900 40px '+F;g.textAlign='center';g.fillText('ダブル',0,-8);g.fillText('にんてい',0,40);g.restore()}
  document.getElementById('out').src=cv.toDataURL('image/png');
 }
 document.getElementById('nm').addEventListener('input',function(){if(ready===2)draw()});

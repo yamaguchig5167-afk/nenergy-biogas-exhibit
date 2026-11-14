@@ -7,6 +7,7 @@
 - 実機の自己診断（設営の確認用）：`index.html#kiosk-check`
 - Web版：`index.html`
 - 子ども向け「もっとリサイクル！わけわけチャレンジ」（永野商店 × エヌエナジー）：`recycle.html`（会場用は `recycle.html#kiosk`。90秒さわらないとバイオガスの展示に戻る）
+- スマホ用「おうちミッション」：`mission.html`（めいじんカードの QR から。`?s=ほし&f=つまずいた所`。チェックはスマホの中だけに残り、何も送信しません）
 
 単一のHTMLファイルで、外部の読み込みはありません（説明欄の動画もファイルに埋め込み）。エヌエナジー様の紹介動画（YouTube）：https://www.youtube.com/watch?v=RRz87myyzbQ
 
