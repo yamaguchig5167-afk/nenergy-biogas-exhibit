@@ -2,7 +2,7 @@
 // ・通信があるときは毎回最新を取りに行き、取れたら手元に保存する（会期中の修正が自動で反映される）
 // ・通信が切れたら、手元に保存した最後の版で動く（MAXHUB が展示を続けられる）
 // ・お知らせ（notice.json）と全編動画（media/）は保存しない（いつも最新・容量を使わない）
-const CACHE = 'ne-exhibit-v4'; // 2026-11-15 実施レポート（report.html）を追加 ／ 11-14 リサイクルゲーム・おうちミッション
+const CACHE = 'ne-exhibit-v5'; // 2026-11-15 電池などの「まぜない ごみ」 ／ 2026-11-15 実施レポート（report.html）を追加 ／ 11-14 リサイクルゲーム・おうちミッション
 self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', './index.html', './cert.html', './recycle.html', './mission.html', './report.html']).catch(() => {}))); });
 self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
 self.addEventListener('fetch', (e) => {

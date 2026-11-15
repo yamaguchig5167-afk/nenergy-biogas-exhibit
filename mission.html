@@ -11,7 +11,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#19559d">
 <!-- 2026-11-14 スマホと連動する機能として作成。会場の MAXHUB（recycle.html のめいじんカード）の QR を読むと開く。
-     ?s=ほしの数（1〜3）&f=ゲームで いちばん つまずいた所（none/cap/lid/clip/rinse/bin）
+     ?s=ほしの数（1〜3）&f=ゲームで いちばん つまずいた所（none/cap/lid/clip/rinse/bin/batt）
      ・何も送信しない静的ページ。チェックの状態は このスマホの localStorage（ne-phone-v1）だけに残る
      ・バイオガスはかせ（cert.html）も同じスマホで開いていれば「ダブル にんてい」
      作り直し：node tools/missionpage.cjs → web/mission.html -->
@@ -148,6 +148,11 @@ shirt:SH+`<path d="M70 60L40 78L22 120L50 134L60 116V232H140V116L150 134L178 120
 r3:`<circle cx="100" cy="70" r="44" fill="#2f7fd0"/><circle cx="58" cy="170" r="44" fill="#3f8f4f"/><circle cx="142" cy="170" r="44" fill="#d9822b"/><text x="100" y="80" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">へらす</text><text x="58" y="166" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">くりかえし</text><text x="58" y="190" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">つかう</text><text x="142" y="166" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">しげんに</text><text x="142" y="190" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">もどす</text><path d="M80 112l-10 16M120 112l10 16M100 172h0" stroke="#2b3a46" stroke-width="4" stroke-linecap="round"/>`,
 peel:SH+`<path d="M100 120Q96 196 64 234Q90 222 104 190Q112 220 140 236Q116 196 112 120Z" fill="#f2cf3a" ${S}/><path d="M100 120Q78 150 42 160Q78 166 102 150M112 120Q130 152 166 160Q132 168 110 150" fill="#f6dc5c" ${S}/><rect x="96" y="96" width="18" height="28" rx="5" fill="#7a5a2a" ${S}/>`
 };
+// まぜない ごみ（2026-11-15）
+ART.batt=SH+`<rect x="88" y="34" width="24" height="20" rx="4" fill="#cfd5da" ${S}/><rect x="62" y="52" width="76" height="188" rx="14" fill="#2b3a46" ${S}/><path d="M62 66q0-14 14-14h48q14 0 14 14v44H62z" fill="#d8a531" ${S}/><path d="M100 68v26M87 81h26" stroke="#2b3a46" stroke-width="7" stroke-linecap="round"/><rect x="74" y="140" width="52" height="34" rx="6" fill="#fff"/><text x="100" y="164" text-anchor="middle" font-size="19" font-weight="900" fill="#2b3a46">でんち</text><path d="M72 124v100" stroke="#fff" stroke-width="5" opacity=".25" stroke-linecap="round"/><path d="M87 214h26" stroke="#cfd5da" stroke-width="7" stroke-linecap="round"/>`;
+ART.mobile=SH+`<rect x="48" y="46" width="104" height="194" rx="20" fill="#3d5a80" ${S}/><rect x="84" y="36" width="32" height="14" rx="3" fill="#cfd5da" ${S}/><path d="M108 92L82 142h18l-8 42 30-54h-19z" fill="#f2c230" stroke="#2b3a46" stroke-width="3.5" stroke-linejoin="round"/><circle cx="76" cy="214" r="6" fill="#7be08a"/><circle cx="94" cy="214" r="6" fill="#7be08a"/><circle cx="112" cy="214" r="6" fill="#cfd5da"/><circle cx="130" cy="214" r="6" fill="#cfd5da"/><path d="M60 66v150" stroke="#fff" stroke-width="5" opacity=".25" stroke-linecap="round"/>`;
+ART.fan=SH+`<rect x="84" y="146" width="32" height="92" rx="14" fill="#f28aa0" ${S}/><circle cx="100" cy="188" r="7" fill="#fff" stroke="#2b3a46" stroke-width="3"/><rect x="92" y="212" width="16" height="8" rx="3" fill="#2b3a46"/><circle cx="100" cy="92" r="64" fill="#fff" ${S}/><circle cx="100" cy="92" r="52" fill="#fde3e9" stroke="#2b3a46" stroke-width="3"/><path d="M100 92q-8-44 18-44q6 30-18 44zM100 92q44-6 44 20q-30 6-44-20zM100 92q-30 32-46 12q18-24 46-12z" fill="#f28aa0" stroke="#2b3a46" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="92" r="10" fill="#2b3a46"/>`;
+ART.spray=SH+`<rect x="84" y="30" width="32" height="26" rx="6" fill="#e9eef3" ${S}/><rect x="110" y="36" width="14" height="10" rx="3" fill="#2b3a46"/><path d="M70 92q0-30 30-36q30 6 30 36z" fill="#cfd5da" ${S}/><rect x="66" y="90" width="68" height="150" rx="10" fill="#e2574c" ${S}/><rect x="66" y="124" width="68" height="62" fill="#fff"/><text x="100" y="152" text-anchor="middle" font-size="17" font-weight="900" fill="#e2574c">スプレー</text><path d="M88 176q12-18 12-2q12-14 12 2" stroke="#e2574c" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M76 100v130" stroke="#fff" stroke-width="5" opacity=".4" stroke-linecap="round"/>`;
 ART.bag=SH+'<path d="M50 110H150L162 236H38Z" fill="#3a9d57" '+S+'/><path d="M74 112V86Q74 60 100 60Q126 60 126 86V112" fill="none" stroke="#2b3a46" stroke-width="8" stroke-linecap="round"/><path d="M76 168q24-30 48 0q-24 30-48 0z" fill="#cfeed8"/>';
 ART.flask=SH+'<rect x="66" y="64" width="68" height="174" rx="22" fill="#2f7fd0" '+S+'/><rect x="74" y="36" width="52" height="34" rx="8" fill="#f08a24" '+S+'/><rect x="66" y="120" width="68" height="56" fill="#fff" opacity=".85"/><path d="M84 148h32" stroke="#2f7fd0" stroke-width="6" stroke-linecap="round"/>';
 const svg=(k,cls)=>'<svg viewBox="0 0 200 260" class="'+(cls||'')+'" aria-hidden="true">'+ART[k].replace(/<g class="part" data-part="dirt">[\s\S]*?<\/g>/g,'')+'</svg>';
@@ -161,17 +166,20 @@ const M={
   rule:{t:'おうちの人と、まちの ごみの 出しかたを たしかめよう',w:'ごみの 出しかたは、すんでいる まちで ちがうよ。',a:'box'},
   milk:{t:'ぎゅうにゅうパックを すすいで あつめよう',w:'1リットルの パック 30まいで、トイレットペーパーが やく5こ できるよ。',a:'milk'},
   bag:{t:'かいものに マイバッグを もっていこう',w:'いらない ふくろを もらわない。ごみを へらす「リデュース」だよ。',a:'bag'},
-  flask:{t:'すいとうを もって でかけよう',w:'なんども つかえる ものを つかう「リユース」だよ。',a:'flask'}
+  flask:{t:'すいとうを もって でかけよう',w:'なんども つかえる ものを つかう「リユース」だよ。',a:'flask'},
+  // 2026-11-15 でんち（出典：環境省の令和7年度の調査・熊本市「特定品目の出し方」）
+  batt:{t:'つかいおわった でんちを、ほかの ごみと べつに あつめよう',w:'まぜると、ごみしゅうしゅう車の 火事の もとに なるよ。出しかたは、おうちの人と まちの ルールを たしかめてね。',a:'batt'}
 };
-const SETS={none:['cap','rinse','rule','milk','bag'],cap:['cap','rinse','rule','milk','bag'],lid:['lid','rinse','rule','cap','bag'],clip:['clip','rule','milk','rinse','bag'],rinse:['rinse','cap','rule','milk','bag'],bin:['rule','cap','rinse','milk','flask']};
-const TRIP={cap:'ゲームで キャップや ラベルを はずしわすれた ところ',lid:'ゲームで びんの ふたを はずしわすれた ところ',clip:'ゲームで クリップを はずしわすれた ところ',rinse:'ゲームで すすぎわすれた ところ',bin:'ゲームで はこを まちがえやすかった ところ'};
+// でんちの ミッションは、火事を ふせぐ だいじな ことなので どの組にも 2つ目に入れる（つまずいた組は 1つ目）
+const SETS={none:['cap','batt','rinse','rule','bag'],cap:['cap','batt','rinse','rule','bag'],lid:['lid','batt','rinse','rule','bag'],clip:['clip','batt','rule','rinse','bag'],rinse:['rinse','batt','cap','rule','bag'],bin:['rule','batt','cap','rinse','flask'],batt:['batt','rule','cap','rinse','bag']};
+const TRIP={cap:'ゲームで キャップや ラベルを はずしわすれた ところ',lid:'ゲームで びんの ふたを はずしわすれた ところ',clip:'ゲームで クリップを はずしわすれた ところ',rinse:'ゲームで すすぎわすれた ところ',bin:'ゲームで はこを まちがえやすかった ところ',batt:'ゲームで でんちなどを はこに いれようと した ところ'};
 
 // ---- このスマホの中だけの記録（送信しない） ----
 const KEY='ne-phone-v1';
 const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
 function load(){let o;try{o=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(_){o={}}if(!isObj(o))o={};const r={};
   r.done={};if(isObj(o.done))for(const k in o.done)if(o.done[k]===true||o.done[k]===1)r.done[k]=true;
-  if(isObj(o.meijin)&&/^[1-3]$/.test(String(o.meijin.s))&&/^(none|cap|lid|clip|rinse|bin)$/.test(String(o.meijin.f)))r.meijin={s:+o.meijin.s,f:o.meijin.f,at:+o.meijin.at||0};
+  if(isObj(o.meijin)&&/^[1-3]$/.test(String(o.meijin.s))&&/^(none|cap|lid|clip|rinse|bin|batt)$/.test(String(o.meijin.f)))r.meijin={s:+o.meijin.s,f:o.meijin.f,at:+o.meijin.at||0};
   if(isObj(o.hakase)&&/^[0-3]$/.test(String(o.hakase.s)))r.hakase={s:+o.hakase.s,at:+o.hakase.at||0};return r}
 let canSave=true;
 // ほかのページ（cert.html）が書いた「はかせ」を消さないよう、保存のたびに いまの記録と合わせる
