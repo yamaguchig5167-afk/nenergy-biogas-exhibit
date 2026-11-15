@@ -92,8 +92,8 @@ https://sol8-co.com/
 </main>
 <script>
 'use strict';
-const KEYS=['visits','taps','step0','step1','step2','step3','step4','summary','quiz_open','q0_ans','q0_ok','q1_ans','q1_ok','q2_ans','q2_ok','cert','cert_count','draw_used','draw_fx','photo','homes_tap','fullvideo','rc_go','rc_open','rc_play','rc_game_open','rc_ok','rc_miss','rc_prep','rc_game_done','rc_quiz_open','rc_q_ok','rc_q_ng','rc_quiz_done','rc_cert','rc_mission_link','rc_cars','rc_truck_push','rc_truck_go'];
-const LABEL={visits:'待機画面から さわり始めた',taps:'タッチの合計',step0:'ステップ1 集める',step1:'ステップ2 受け入れる',step2:'ステップ3 発酵する',step3:'ステップ4 発電する',step4:'ステップ5 肥料に生かす',summary:'まとめを自分で開いた',quiz_open:'○×クイズを自分で始めた',q0_ans:'問1に答えた',q0_ok:'　うち正解',q1_ans:'問2に答えた',q1_ok:'　うち正解',q2_ans:'問3に答えた',q2_ok:'　うち正解',cert:'バイオガスはかせ 認定まで',cert_count:'「3・2・1で 写真をとる」を押した',draw_used:'手書きで書いた',draw_fx:'「電気にかえる！」を押した',photo:'実際の写真・動画を拡大した',homes_tap:'世帯の家マークを点けた',fullvideo:'紹介動画の全編を再生した',rc_go:'リサイクルゲームへの入口を押した',rc_open:'リサイクルゲームを開いた',rc_play:'「あそぶ」を押した',rc_game_open:'わけわけゲームだけを選んだ',rc_ok:'ごみを正しいはこに入れた',rc_miss:'ちがうはこに入れようとした',rc_prep:'キャップ・ラベル・ふたを外す／すすいだ',rc_game_done:'わけわけゲームを最後まで',rc_quiz_open:'リサイクルクイズだけを選んだ',rc_q_ok:'リサイクルクイズ 正解',rc_q_ng:'リサイクルクイズ 不正解',rc_quiz_done:'リサイクルクイズを最後まで',rc_cert:'めいじんカードまで進んだ',rc_mission_link:'おうちミッションを開いた（Web版）',rc_cars:'「はたらく くるま」を開いた',rc_truck_push:'パッカー車に ごみを入れた',rc_truck_go:'パッカー車が満タンで走った'};
+const KEYS=['visits','taps','step0','step1','step2','step3','step4','summary','quiz_open','q0_ans','q0_ok','q1_ans','q1_ok','q2_ans','q2_ok','cert','cert_count','draw_used','draw_fx','photo','homes_tap','fullvideo','rc_go','rc_open','rc_play','rc_game_open','rc_ok','rc_miss','rc_prep','rc_game_done','rc_quiz_open','rc_q_ok','rc_q_ng','rc_quiz_done','rc_cert','rc_mission_link','rc_cars','rc_truck_push','rc_truck_go','x_rc','x_bio','both'];
+const LABEL={visits:'待機画面から さわり始めた',taps:'タッチの合計',step0:'ステップ1 集める',step1:'ステップ2 受け入れる',step2:'ステップ3 発酵する',step3:'ステップ4 発電する',step4:'ステップ5 肥料に生かす',summary:'まとめを自分で開いた',quiz_open:'○×クイズを自分で始めた',q0_ans:'問1に答えた',q0_ok:'　うち正解',q1_ans:'問2に答えた',q1_ok:'　うち正解',q2_ans:'問3に答えた',q2_ok:'　うち正解',cert:'バイオガスはかせ 認定まで',cert_count:'「3・2・1で 写真をとる」を押した',draw_used:'手書きで書いた',draw_fx:'「電気にかえる！」を押した',photo:'実際の写真・動画を拡大した',homes_tap:'世帯の家マークを点けた',fullvideo:'紹介動画の全編を再生した',rc_go:'リサイクルゲームへの入口を押した',rc_open:'リサイクルゲームを開いた',rc_play:'「あそぶ」を押した',rc_game_open:'わけわけゲームだけを選んだ',rc_ok:'ごみを正しいはこに入れた',rc_miss:'ちがうはこに入れようとした',rc_prep:'キャップ・ラベル・ふたを外す／すすいだ',rc_game_done:'わけわけゲームを最後まで',rc_quiz_open:'リサイクルクイズだけを選んだ',rc_q_ok:'リサイクルクイズ 正解',rc_q_ng:'リサイクルクイズ 不正解',rc_quiz_done:'リサイクルクイズを最後まで',rc_cert:'めいじんカードまで進んだ',rc_mission_link:'おうちミッションを開いた（Web版）',rc_cars:'「はたらく くるま」を開いた',rc_truck_push:'パッカー車に ごみを入れた',rc_truck_go:'パッカー車が満タンで走った',x_rc:'はかせ認定から リサイクルゲームへ',x_bio:'めいじんカードから バイオガスのクイズへ',both:'同じ組が 両方の認定（ダブル にんてい）'};
 const QUIZ=[['食べものごみは、容器に入ったまま出せる？','○'],['食べものごみは、燃やして電気をつくる？','×'],['発酵したあとに残るものは、肥料になる？','○']];
 const EVENT=['2026-11-21','2026-11-22'];
 const STORE='ne-report-v1';
@@ -154,6 +154,7 @@ function render(){
   if(topS[1]>0)L.push('しくみの5つのステップで、いちばん選ばれたのは「'+esc(topS[0])+'」（'+fmt(topS[1])+'回）でした。');
   const qa=[0,1,2].map(i=>[g('q'+i+'_ans'),g('q'+i+'_ok')]);const qA=qa.reduce((s,x)=>s+x[0],0),qO=qa.reduce((s,x)=>s+x[1],0);
   if(qA>0){let t='○×クイズは延べ <b>'+fmt(qA)+'回</b>答えられ、正解率は <b>'+pct(qO,qA)+'%</b> でした。';const cand=qa.map((x,i)=>[i,x[0],pct(x[1],x[0])]).filter(x=>x[1]>=5);if(cand.length>=2){const lo=cand.slice().sort((a,b)=>a[2]-b[2])[0];t+='いちばん正解率が低かったのは問'+(lo[0]+1)+'（'+lo[2]+'%）です。'}L.push(t)}
+  if(g('both')>0)L.push('ふたつの展示の両方の認定（バイオガスはかせ と もっとリサイクル めいじん）を同じ組が取った「ダブル にんてい」は <b>'+fmt(g('both'))+'回</b>でした。');
   if(g('rc_open')+g('rc_play')>0)L.push('リサイクルゲームでは、ごみを正しいはこに入れた回数が <b>'+fmt(g('rc_ok'))+'回</b>、めいじんカードまで進んだ回数が <b>'+fmt(g('rc_cert'))+'回</b>でした。');
   let h='<div class="lead sec">'+L.map(x=>'<p>'+x+'</p>').join('')+'</div>';
   h+='<p class="note">回数は画面の操作を数えたもので、来場者の人数とは一致しません（1組が何度もさわると、その分ふえます）。手書きの絵・写真・個人の情報は記録していません。'+(off.length&&ev.length?'会期外の日（'+off.map(md).join('・')+'：準備や確認の操作）は、合計に入れていません。':'')+'</p>';
@@ -177,6 +178,8 @@ function render(){
     '<tr><td>「はたらく くるま」（パッカー車）を開いた／満タンで走った</td><td>'+fmt(g('rc_cars'))+' 回 ／ '+fmt(g('rc_truck_go'))+' 回</td></tr>'+
     '</tbody></table></div>';
   h+='</section>';
+  // ふたつの展示のつながり
+  h+='<section class="sec"><h2>ふたつの展示のつながり</h2><p class="note">同じ画面の前にいる組（さわらない時間が90秒を超えるまで）を1組として数えています。</p>'+bars([['はかせ認定 → リサイクルゲームへ',g('x_rc')],['めいじんカード → バイオガスのクイズへ',g('x_bio')],['ダブル にんてい（両方の認定）',g('both'),1]])+'</section>';
   // 日ごとの表
   const cols=ev.concat(off);
   h+='<section class="sec"><h2>日ごとの回数</h2><div class="scroll"><table id="daytable"><thead><tr><th>項目</th>'+cols.map(d=>'<th'+(off.includes(d)?' class="off"':'')+'>'+mdw(d)+(off.includes(d)?'<br>会期外':'')+'</th>').join('')+(ev.length?'<th>会期の合計</th>':'')+'</tr></thead><tbody>'+
