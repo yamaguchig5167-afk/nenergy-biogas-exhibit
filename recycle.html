@@ -443,6 +443,8 @@ const FACT_MS=8000;         // 「うまれかわり」の画面を自動で閉�
 const IDLE_MS=90000;        // 展示モードで、さわらないまま この時間がたつと バイオガスの展示に戻る
 const MAIN_URL='./index.html';
 const KIOSK=/^#kiosk/.test(location.hash);
+// 展示（index.html）の中で開かれているか。全画面を保つため、展示モードでは index.html が このページを中に開く（2026-11-16）
+const EMBED=KIOSK&&window.parent!==window;
 const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 if(KIOSK)document.documentElement.classList.add('kiosk');
@@ -562,8 +564,9 @@ let scene='home';
 let gGen=0; // 画面や品物が変わるたびに増やす。古いアニメーションの続きを止める目印
 function show(id){gGen++;scene=id;const iw=document.getElementById('itemwrap');if(iw)iw.getAnimations().forEach(a=>a.cancel());$$('.scene').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));$('#btn-home').hidden=(id==='home');$('#igtop').classList.toggle('on',id==='home');$('#btn-about').hidden=(id!=='home');closeFact();if(id!=='cars')truckReset()}
 $('#btn-home').onclick=()=>{show('home')};
-$('#btn-back').onclick=()=>{if(KIOSK)vGo('top');goMain()};$('#btn-exhibit').onclick=()=>{const v=KIOSK?vLoad():null;const q=!(v&&v.hakase);if(q)tick('x_bio');if(KIOSK)vGo(q?'quiz':'top');goMain()};
-function goMain(){location.href=MAIN_URL+(KIOSK?'#kiosk':'')}
+$('#btn-back').onclick=()=>{if(KIOSK)vGo('top');goMain('top')};$('#btn-exhibit').onclick=()=>{const v=KIOSK?vLoad():null;const q=!(v&&v.hakase);if(q)tick('x_bio');if(KIOSK)vGo(q?'quiz':'top');goMain(q?'quiz':'top')};
+// 行き先（go＝'quiz'／'top'／''）は、保存だけに頼らず 合図にも入れて渡す（USB から開くと 展示とゲームが別の処理になり、保存が伝わるのが一瞬おくれるため）
+function goMain(go){if(EMBED){try{parent.postMessage({ne:'rc-back',go:go||''},'*')}catch(_){}return}location.href=MAIN_URL+(KIOSK?'#kiosk':'')}
 $('#btn-about').onclick=()=>$('#about').classList.add('on');$('#about-close').onclick=()=>$('#about').classList.remove('on');
 $('#about').addEventListener('click',e=>{if(e.target.id==='about')$('#about').classList.remove('on')});
 
@@ -749,11 +752,14 @@ addEventListener('pointerdown',vTouch,{capture:true,passive:true});
 function certLink(){const r=vMark('meijin');const v=r?r.v:null;$('#cdouble').hidden=!(v&&v.both);if(KIOSK)$('#btn-exhibit').textContent=v&&v.hakase?'バイオガスの 展示を みる':'つぎは バイオガスの クイズ';if(r&&r.first)setTimeout(()=>confetti($('#cdouble').getBoundingClientRect(),40),700)}
 
 // ---- 展示モード：さわらないまま 90 秒で バイオガスの展示へ ----
-let idleT=null;function poke(){if(!KIOSK)return;clearTimeout(idleT);idleT=setTimeout(()=>{if($('#fact').classList.contains('on')&&scene==='game'){poke();return}vClear();goMain()},IDLE_MS)}
+let idleT=null;function poke(){if(!KIOSK)return;clearTimeout(idleT);idleT=setTimeout(()=>{if($('#fact').classList.contains('on')&&scene==='game'){poke();return}vClear();goMain('')},IDLE_MS)}
 ['pointerdown','keydown','click'].forEach(ev=>addEventListener(ev,poke,{passive:true,capture:true}));poke();
 if(KIOSK)tick('rc_open');
+if(EMBED){try{parent.postMessage({ne:'rc-ready'},'*')}catch(_){}}
+// このページを直接 展示モードで開いたとき：さわられたら全画面にする（中で開かれているときは 外の展示が全画面を持つ）
+if(KIOSK&&!EMBED){const goFull=()=>{const d=document.documentElement;if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen().catch(()=>{})};addEventListener('pointerup',goFull,true)}
 // バイオガスの展示の「つぎは リサイクル ゲーム」から来たら、すぐゲームを始める
-{const go=vArrive();if(go==='play'){flow=true;tick('rc_play');startGame()}}
+{const byHash=location.hash==='#kiosk-play';const saved=vArrive();const go=byHash?'play':saved;if(go==='play'){flow=true;tick('rc_play');startGame()}}
 addEventListener('contextmenu',e=>e.preventDefault());
 </script>
 </body>
