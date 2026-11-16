@@ -98,6 +98,8 @@ const QUIZ=[['食べものごみは、容器に入ったまま出せる？','○
 const EVENT=['2026-11-21','2026-11-22'];
 const STORE='ne-report-v1';
 const $=s=>document.querySelector(s);
+// 2026-11-16 「はたらく くるま」は外した。QR の並び（KEYS）は変えず、表にだけ出さない
+const HIDE=['rc_mission_link','rc_cars','rc_truck_push','rc_truck_go'];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Number(n).toLocaleString('ja-JP');
 const pct=(a,b)=>b>0?Math.round(a*100/b):null;
@@ -178,7 +180,6 @@ function render(){
     '<tr><td>電池・モバイルバッテリー・スプレー缶を「べつに だす」に分けた</td><td>'+fmt(g('rc_sep_ok'))+' 回</td></tr>'+
     '<tr><td>電池などを はこに入れようとした（「まって！ 火事の もとに」で止めた）</td><td>'+fmt(g('rc_sep_miss'))+' 回</td></tr>'+
     '<tr><td>リサイクルクイズの正解率</td><td>'+(rq?pct(g('rc_q_ok'),rq)+'%（'+fmt(rq)+'回中）':'—')+'</td></tr>'+
-    '<tr><td>「はたらく くるま」（パッカー車）を開いた／満タンで走った</td><td>'+fmt(g('rc_cars'))+' 回 ／ '+fmt(g('rc_truck_go'))+' 回</td></tr>'+
     '</tbody></table></div>';
   h+='</section>';
   // ふたつの展示のつながり
@@ -186,13 +187,13 @@ function render(){
   // 日ごとの表
   const cols=ev.concat(off);
   h+='<section class="sec"><h2>日ごとの回数</h2><div class="scroll"><table id="daytable"><thead><tr><th>項目</th>'+cols.map(d=>'<th'+(off.includes(d)?' class="off"':'')+'>'+mdw(d)+(off.includes(d)?'<br>会期外':'')+'</th>').join('')+(ev.length?'<th>会期の合計</th>':'')+'</tr></thead><tbody>'+
-    KEYS.filter(k=>k!=='rc_mission_link').map(k=>'<tr><td>'+esc(LABEL[k])+'</td>'+cols.map(d=>'<td'+(off.includes(d)?' class="off"':'')+'>'+fmt((byDay[d]||{})[k]||0)+'</td>').join('')+(ev.length?'<td><b>'+fmt(g(k))+'</b></td>':'')+'</tr>').join('')+
+    KEYS.filter(k=>!HIDE.includes(k)).map(k=>'<tr><td>'+esc(LABEL[k])+'</td>'+cols.map(d=>'<td'+(off.includes(d)?' class="off"':'')+'>'+fmt((byDay[d]||{})[k]||0)+'</td>').join('')+(ev.length?'<td><b>'+fmt(g(k))+'</b></td>':'')+'</tr>').join('')+
     '</tbody></table></div></section>';
   h+='<p class="note">集計のしかた：MAXHUB の展示モードで、画面の操作の回数だけを端末の中に日付ごとに記録しました。スタッフのスマホで QR を読んで、このページにまとめています。MAXHUB が2台以上あるときは足し合わせ、同じ MAXHUB を何度読んでも二重には数えません。</p>';
   $('#body').innerHTML=h;
 }
 
-function csv(){const o=data();const byDay=totals(o);const all=Object.keys(byDay).sort();const head=['項目'].concat(all.map(d=>d+(EVENT.includes(d)?'':'（会期外）')));const rows=KEYS.filter(k=>k!=='rc_mission_link').map(k=>[LABEL[k].trim()].concat(all.map(d=>(byDay[d]||{})[k]||0)));return [head].concat(rows).map(r=>r.join('\t')).join('\n')}
+function csv(){const o=data();const byDay=totals(o);const all=Object.keys(byDay).sort();const head=['項目'].concat(all.map(d=>d+(EVENT.includes(d)?'':'（会期外）')));const rows=KEYS.filter(k=>!HIDE.includes(k)).map(k=>[LABEL[k].trim()].concat(all.map(d=>(byDay[d]||{})[k]||0)));return [head].concat(rows).map(r=>r.join('\t')).join('\n')}
 
 // ---- 起動 ----
 (function(){
